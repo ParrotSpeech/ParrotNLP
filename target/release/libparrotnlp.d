@@ -1,1 +1,0 @@
-/Users/thanh/Workspace/ParrotNLP/target/release/libparrotnlp.dylib: /Users/thanh/Workspace/ParrotNLP/src/lib.rs /Users/thanh/Workspace/ParrotNLP/src/py.rs /Users/thanh/Workspace/ParrotNLP/src/word_tokenize/mod.rs /Users/thanh/Workspace/ParrotNLP/src/word_tokenize/word_tokenize.rs
