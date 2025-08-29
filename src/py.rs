@@ -3,6 +3,7 @@ use pyo3::{
 };
 
 use crate::word_tokenize::{VietnameseWordSegmenter, VietnameseTokenizer};
+use crate::text_normalize::{text_normalize, token_normalize, normalize_characters_in_text};
 
 
 #[pyclass]
@@ -94,5 +95,31 @@ impl VietnameseTokenizerPy {
 fn _parrotnlp(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     m.add_class::<VietnameseWordSegmenterPy>()?;
     m.add_class::<VietnameseTokenizerPy>()?;
+    
+    // Add text normalization functions
+    m.add_function(wrap_pyfunction!(text_normalize_py, m)?)?;
+    m.add_function(wrap_pyfunction!(token_normalize_py, m)?)?;
+    m.add_function(wrap_pyfunction!(normalize_characters_in_text_py, m)?)?;
+    
     Ok(())
+}
+
+/// Python wrapper for text_normalize
+#[pyfunction]
+fn text_normalize_py(text: &str, tokenizer: Option<&str>) -> String {
+    let tokenizer = tokenizer.unwrap_or("underthesea");
+    text_normalize(text, tokenizer)
+}
+
+/// Python wrapper for token_normalize  
+#[pyfunction]
+fn token_normalize_py(token: &str, use_character_normalize: Option<bool>) -> String {
+    let use_character_normalize = use_character_normalize.unwrap_or(true);
+    token_normalize(token, use_character_normalize)
+}
+
+/// Python wrapper for normalize_characters_in_text
+#[pyfunction]
+fn normalize_characters_in_text_py(text: &str) -> String {
+    normalize_characters_in_text(text)
 }

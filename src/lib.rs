@@ -5,3 +5,4 @@ use pyo3::prelude::*;
 mod py;
 
 mod word_tokenize;
+mod text_normalize;
