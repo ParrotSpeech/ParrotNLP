@@ -12,6 +12,8 @@ use rustc_hash::FxHashMap as HashMap;
 #[cfg(feature = "python")]
 mod py;
 
+mod word_tokenize;
+
 pub type Rank = u32;
 
 fn _byte_pair_merge(ranks: &HashMap<Vec<u8>, Rank>, piece: &[u8]) -> Vec<(usize, Rank)> {

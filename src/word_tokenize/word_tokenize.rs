@@ -120,7 +120,7 @@ impl VietnameseTokenizer {
             .collect()
     }
 
-    pub fn tokenize_with_tags(&self, text: &str, include_tags: bool) -> Vec<Token> {
+    pub fn tokenize_with_tags(&self, text: &str, _include_tags: bool) -> Vec<Token> {
         let normalized_text = if self.use_character_normalize {
             normalize_characters_in_text(text)
         } else {
@@ -529,12 +529,18 @@ fn build_regex_patterns(fixed_words: &[String]) -> Regex {
     ];
     let specials_pattern = format!("(?P<special>({}))", specials.join("|"));
 
+    let upper_clean = upper.replace("[", "").replace("]", "");
+    let w_clean = w.replace("[", "").replace("]", "");
+    
+    let abbrev_pattern1 = format!(r"{}+(?:\.{}+)+\.?", upper_clean, w_clean);
+    let abbrev_pattern2 = format!(r"{}+['']{}+", w_clean, w_clean);
+    
     let abbreviations = vec![
         r"[A-ZĐ]+&[A-ZĐ]+",
         r"T\.Ư",
-        &format!(r"{}+(?:\.{}+)+\.?", upper.replace("[", "").replace("]", ""), w.replace("[", "").replace("]", "")),
-        &format!(r"{}+['']{}+", w.replace("[", "").replace("]", ""), w.replace("[", "").replace("]", "")),
-        r"[A-ZĐ]+\.(?!$)",
+        &abbrev_pattern1,
+        &abbrev_pattern2,
+        r"[A-ZĐ]+\.",
         r"Tp\.",
         r"Mr\.", r"Mrs\.", r"Ms\.",
         r"Dr\.", r"ThS\.", r"Th\.S", r"Th\.s",
@@ -545,7 +551,7 @@ fn build_regex_patterns(fixed_words: &[String]) -> Regex {
     let abbreviations_pattern = format!("(?P<abbr>({}))", abbreviations.join("|"));
 
     // Priority 2: URLs, emails, etc.
-    let url_pattern = r#"(?P<url>(?:(?:ftp|http)s?:(?:/{1,3}|[a-z0-9%])|[a-z0-9.\-]+[.](?:[a-z]{2,13})/)(?:[^\s()<>{}\[\]]+|\([^\s()]*?\([^\s()]+\)[^\s()]*?\)|\([^\s]+?\))+(?:\([^\s()]*?\([^\s()]+\)[^\s()]*?\)|\([^\s]+?\)|[^\s`!()\[\]{};:'".,<>?«»""''])|(?:(?<!@)[a-z0-9]+(?:[.\-][a-z0-9]+)*[.](?:[a-z]{2,13})\b/?(?!@)))"#;
+    let url_pattern = r#"(?P<url>(?:(?:ftp|http)s?:(?:/{1,3}|[a-z0-9%])|[a-z0-9.\-]+[.](?:[a-z]{2,13})/)(?:[^\s()<>{}\[\]]+|\([^\s()]*?\([^\s()]+\)[^\s()]*?\)|\([^\s]+?\))+(?:\([^\s()]*?\([^\s()]+\)[^\s()]*?\)|\([^\s]+?\)|[^\s`!()\[\]{};:'".,<>?«»""''])|(?:[a-z0-9]+(?:[.\-][a-z0-9]+)*[.](?:[a-z]{2,13})\b/?))"#;
     
     let email_pattern = r"(?P<email>[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)";
     
@@ -580,8 +586,8 @@ fn build_regex_patterns(fixed_words: &[String]) -> Regex {
         r":\)\)*",
         r"=\)\)+", 
         r"♥‿♥",
-        r":D+(?=\s)",
-        r":D+(?=$)",
+        r":D+\s",
+        r":D+$",
         r"<3",
     ];
     let emoji_pattern = format!("(?P<emoji>({}))", emoji_patterns.join("|"));
@@ -596,7 +602,7 @@ fn build_regex_patterns(fixed_words: &[String]) -> Regex {
     let punct_pattern = format!("(?P<punct>({}))", punct_patterns.join("|"));
 
     // Priority 3
-    let word_hyphen_pattern = r"(?P<word_hyphen>(?<=\b)\w+\-[\w+-]*\w+)";
+    let word_hyphen_pattern = r"(?P<word_hyphen>\b\w+\-[\w+-]*\w+)";
     let word_pattern = r"(?P<word>\w+)";
     
     let symbol_patterns = vec![
