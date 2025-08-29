@@ -25,9 +25,10 @@ jobs:
       - uses: pypa/cibuildwheel@v2.22.0
         env:
           CIBW_BUILD: "cp${{ matrix.python-version}}-*"
-
-      - name: Run tests
-        run: pytest tests --import-mode=append
+          CIBW_BUILD_FRONTEND: "build"
+          CIBW_BEFORE_BUILD: "pip install maturin"
+          CIBW_BEFORE_TEST: "pip install pytest"
+          CIBW_TEST_COMMAND: "python tests/test_word_tokenize.py"
 
       - uses: actions/upload-artifact@v4
         with:
@@ -53,6 +54,10 @@ jobs:
           CIBW_BUILD: "cp${{ matrix.python-version}}-*"
           CIBW_ARCHS: aarch64
           CIBW_BUILD_VERBOSITY: 3
+          CIBW_BUILD_FRONTEND: "build"
+          CIBW_BEFORE_BUILD: "pip install maturin"
+          CIBW_BEFORE_TEST: "pip install pytest"
+          CIBW_TEST_COMMAND: "python tests/test_word_tokenize.py"
           # https://github.com/rust-lang/cargo/issues/10583
           CIBW_ENVIRONMENT_LINUX: PATH="$PATH:$HOME/.cargo/bin" CARGO_NET_GIT_FETCH_WITH_CLI=true
 
@@ -71,17 +76,22 @@ jobs:
         name: Install Python
         with:
           python-version: "3.9"
-      - name: Run check-manifest
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{ matrix.target }}
+          override: true
+      - name: Install build dependencies
         run: |
-          pip install check-manifest
-          check-manifest -v
+          pip install --upgrade pip
+          pip install build maturin
       - name: Build sdist
         run: |
-          pip install --upgrade build
           python -m build --sdist
       - uses: actions/upload-artifact@v4
         with:
-          name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
+          name: sdist
           path: ./dist/*.tar.gz
 
   join_artifacts:

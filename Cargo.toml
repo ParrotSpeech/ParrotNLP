@@ -1,6 +1,6 @@
 [package]
 name = "parrotnlp"
-version = "0.11.0"
+version = "0.1.0"
 edition = "2021"
 
 [lib]
@@ -17,9 +17,6 @@ pyo3 = { version = "0.25.1", default-features = false, features = [
     "macros",
 ], optional = true }
 
-# parrotnlp dependencies
-fancy-regex = "0.13.0"
+# Word tokenization dependencies
 regex = "1.10.3"
-rustc-hash = "1.1.0"
-bstr = "1.5.0"
 once_cell = "1.18.0"

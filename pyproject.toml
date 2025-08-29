@@ -1,12 +1,11 @@
 [project]
 name = "parrotnlp"
-version = "0.11.0"
-description = "ParrotNLP - NLP Processing toolkit for vietnamese in Rust"
+version = "0.1.0"
+description = "ParrotNLP - Vietnamese word tokenization toolkit in Rust"
 readme = "README.md"
 license = "MIT"
 authors = [{ name = "Thanh Hoang-Minh" }, { email = "parrotspeechai@gmail.com" }]
-dependencies = ["regex>=2022.1.18", "requests>=2.26.0"]
-optional-dependencies = { blobfile = ["blobfile>=2"] }
+dependencies = ["regex>=2022.1.18"]
 requires-python = ">=3.9"
 
 [project.urls]
@@ -15,8 +14,12 @@ repository = "https://github.com/parrotspeech/parrotnlp"
 changelog = "https://github.com/parrotspeech/parrotnlp/blob/main/CHANGELOG.md"
 
 [build-system]
-build-backend = "setuptools.build_meta"
-requires = ["setuptools>=62.4", "wheel", "setuptools-rust>=1.5.2"]
+build-backend = "maturin"
+requires = ["maturin>=1.0,<2.0"]
+
+[tool.maturin]
+features = ["python"]
+module-name = "parrotnlp._parrotnlp"
 
 [tool.cibuildwheel]
 build-frontend = "build"
@@ -38,5 +41,5 @@ macos.archs = ["x86_64", "arm64"]
 # Warnings will be silenced with following CIBW_TEST_SKIP
 test-skip = "*-macosx_arm64"
 
-before-test = "pip install pytest hypothesis"
-test-command = "pytest {project}/tests --import-mode=append"
+before-test = "pip install pytest"
+test-command = "python tests/test_word_tokenize.py"
