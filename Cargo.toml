@@ -1,0 +1,26 @@
+[package]
+name = "parrotnlp"
+version = "0.11.0"
+edition = "2021"
+
+[lib]
+name = "parrotnlp"
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = []
+python = [
+    "pyo3",
+]
+
+[dependencies]
+pyo3 = { version = "0.25.1", default-features = false, features = [
+    "extension-module",
+    "macros",
+], optional = true }
+
+# parrotnlp dependencies
+fancy-regex = "0.13.0"
+regex = "1.10.3"
+rustc-hash = "1.1.0"
+bstr = "1.5.0"
