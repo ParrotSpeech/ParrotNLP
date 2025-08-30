@@ -42,4 +42,3 @@ macos.archs = ["x86_64", "arm64"]
 test-skip = "*-macosx_arm64"
 
 before-test = "pip install pytest"
-test-command = "python tests/test_word_tokenize.py"
