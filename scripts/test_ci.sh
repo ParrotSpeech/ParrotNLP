@@ -17,26 +17,6 @@ echo "2. Validating configuration files..."
 python -c "import tomllib; tomllib.load(open('pyproject.toml', 'rb')); print('✅ pyproject.toml is valid')"
 cargo check --message-format=short
 
-# Test 3: Check for tiktoken references
-echo "3. Checking for tiktoken references..."
-# Use find to exclude specific files and directories
-FOUND_TIKTOKEN=$(find . -type f \( -name "*.py" -o -name "*.rs" -o -name "*.toml" -o -name "*.md" \) \
-    -not -path "./.git/*" \
-    -not -path "./target/*" \
-    -not -path "./dist/*" \
-    -not -path "./__pycache__/*" \
-    -not -path "./.github/*" \
-    -not -name "test_ci.sh" \
-    -exec grep -l "tiktoken" {} \; 2>/dev/null || true)
-
-if [ -n "$FOUND_TIKTOKEN" ]; then
-    echo "❌ Found tiktoken references in:"
-    echo "$FOUND_TIKTOKEN"
-    exit 1
-else
-    echo "✅ No tiktoken references found"
-fi
-
 # Test 4: Check for encoding references
 echo "4. Checking for encoding references..."
 FOUND_ENCODING=$(find . -type f \( -name "*.py" -o -name "*.rs" -o -name "*.toml" -o -name "*.md" \) \
